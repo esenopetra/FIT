@@ -1,0 +1,1 @@
+function e(e){return Math.round(e*2.20462*10)/10}function t(e){return Math.round(e/2.20462*10)/10}function n(e){return Math.round(e*1e3)}function r(e,t){return t===`cm`?e:Math.round(e*2.54*10)/10}function i(e){return Math.round(e/2.54*10)/10}function a(e,n){return n===`kg`?e:t(e)}export{r as a,n as i,e as n,a as o,t as r,i as t};

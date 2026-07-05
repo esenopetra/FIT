@@ -1,0 +1,1 @@
+import{s as e,t}from"./schemas-BUne8lDZ.js";function n(n){return e(t,n)}export{n as t};
