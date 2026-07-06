@@ -17,9 +17,9 @@ export function ProgressBar({
 
   return (
     <div className="mb-3">
-      <div className="mb-1 flex items-center justify-between text-sm">
-        <span className="font-medium text-slate-700">{label}</span>
-        <span className={over ? 'font-semibold text-amber-600' : 'text-slate-500'}>
+      <div className="mb-1.5 flex items-center justify-between text-sm">
+        <span className="font-medium text-ink-secondary">{label}</span>
+        <span className={over ? 'font-medium text-amber-600 dark:text-amber-400' : 'text-subtle'}>
           {Math.round(current)}
           {unit} / {Math.round(target)}
           {unit} · {pct}%
@@ -31,10 +31,10 @@ export function ProgressBar({
         aria-valuemin={0}
         aria-valuemax={100}
         aria-label={label}
-        className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200"
+        className="h-2 w-full overflow-hidden rounded-full bg-track"
       >
         <div
-          className={`h-full rounded-full ${over ? 'bg-amber-500' : 'bg-brand-600'}`}
+          className={`h-full rounded-full transition-all duration-300 ${over ? 'bg-amber-500' : 'bg-brand-600'}`}
           style={{ width: `${visualPct}%` }}
         />
       </div>

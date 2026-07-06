@@ -1,5 +1,7 @@
 import { RadialBar, RadialBarChart, PolarAngleAxis } from 'recharts';
 import { calculateProgressPercent } from '../../lib/calculations';
+import { getChartColors } from './chartColors';
+import { useIsDarkMode } from '../../hooks/useIsDarkMode';
 
 export function RadialProgress({
   current,
@@ -12,6 +14,8 @@ export function RadialProgress({
   unit: string;
   color: string;
 }) {
+  const isDark = useIsDarkMode();
+  const colors = getChartColors(isDark);
   const pct = Math.min(calculateProgressPercent(current, target), 100);
   const data = [{ name: 'value', value: pct, fill: color }];
 
@@ -22,19 +26,19 @@ export function RadialProgress({
         height={160}
         cx="50%"
         cy="50%"
-        innerRadius={55}
-        outerRadius={75}
-        barSize={14}
+        innerRadius={56}
+        outerRadius={74}
+        barSize={12}
         data={data}
         startAngle={90}
         endAngle={-270}
       >
         <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
-        <RadialBar background dataKey="value" cornerRadius={8} angleAxisId={0} />
+        <RadialBar background={{ fill: colors.track }} dataKey="value" cornerRadius={6} angleAxisId={0} />
       </RadialBarChart>
       <div className="absolute flex flex-col items-center">
-        <span className="text-xl font-bold text-slate-900">{Math.round(current)}</span>
-        <span className="text-xs text-slate-500">
+        <span className="text-xl font-semibold text-ink">{Math.round(current)}</span>
+        <span className="text-xs text-subtle">
           of {Math.round(target)} {unit}
         </span>
       </div>

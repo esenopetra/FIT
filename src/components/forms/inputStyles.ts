@@ -1,13 +1,13 @@
 export const inputClass =
-  'w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2 text-base text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200';
+  'w-full min-h-11 rounded-xl border border-line bg-surface px-3.5 py-2 text-base text-ink placeholder:text-subtle focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/10';
 
 export const buttonPrimaryClass =
-  'inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-base font-semibold text-white active:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2 text-base font-medium text-white hover:bg-brand-700 active:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50';
 
 export const buttonSecondaryClass =
-  'inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-base font-semibold text-slate-700 active:bg-slate-100';
+  'inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-line bg-surface px-4 py-2 text-base font-medium text-ink-secondary hover:bg-surface-hover active:bg-track';
 
 export const buttonDangerClass =
-  'inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-red-300 bg-white px-4 py-2 text-base font-semibold text-red-600 active:bg-red-50';
+  'inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-2 text-base font-medium text-red-600 hover:bg-red-500/10 active:bg-red-500/15 dark:text-red-400';
 
-export const cardClass = 'rounded-xl border border-slate-200 bg-white p-4 shadow-sm';
+export const cardClass = 'rounded-2xl border border-line bg-surface p-4';

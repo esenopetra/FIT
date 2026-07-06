@@ -45,7 +45,7 @@ const EditProfileScreen = lazy(() =>
 );
 
 function RouteFallback() {
-  return <div className="flex min-h-screen items-center justify-center text-slate-500">Loading…</div>;
+  return <div className="flex min-h-screen items-center justify-center text-muted">Loading…</div>;
 }
 
 export function App() {

@@ -8,10 +8,10 @@ export function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-      <p className="text-xs font-medium text-slate-500">{label}</p>
-      <p className="mt-1 text-xl font-bold text-slate-900">{value}</p>
-      {sub && <p className="mt-0.5 text-xs text-slate-400">{sub}</p>}
+    <div className="rounded-2xl border border-line bg-surface p-3.5">
+      <p className="text-xs font-medium text-muted">{label}</p>
+      <p className="mt-1 text-xl font-semibold tracking-tight text-ink">{value}</p>
+      {sub && <p className="mt-0.5 text-xs text-subtle">{sub}</p>}
     </div>
   );
 }

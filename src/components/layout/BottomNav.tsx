@@ -1,16 +1,17 @@
 import { NavLink } from 'react-router-dom';
+import { House, ChartColumn, Settings } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Home', icon: '🏠' },
-  { to: '/reports', label: 'Reports', icon: '📊' },
-  { to: '/settings', label: 'Settings', icon: '⚙️' },
+  { to: '/dashboard', label: 'Home', Icon: House },
+  { to: '/reports', label: 'Reports', Icon: ChartColumn },
+  { to: '/settings', label: 'Settings', Icon: Settings },
 ];
 
 export function BottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface/95 backdrop-blur pb-[env(safe-area-inset-bottom)]"
     >
       <ul className="mx-auto flex max-w-lg justify-around">
         {NAV_ITEMS.map((item) => (
@@ -18,15 +19,17 @@ export function BottomNav() {
             <NavLink
               to={item.to}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-0.5 py-2 text-xs font-medium ${
-                  isActive ? 'text-brand-700' : 'text-slate-500'
+                `flex flex-col items-center gap-1 py-2.5 text-xs font-medium ${
+                  isActive ? 'text-brand-700 dark:text-brand-400' : 'text-subtle'
                 }`
               }
             >
-              <span aria-hidden="true" className="text-lg leading-none">
-                {item.icon}
-              </span>
-              {item.label}
+              {({ isActive }) => (
+                <>
+                  <item.Icon size={22} strokeWidth={isActive ? 2.25 : 1.75} aria-hidden="true" />
+                  {item.label}
+                </>
+              )}
             </NavLink>
           </li>
         ))}

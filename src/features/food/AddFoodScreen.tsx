@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { AppLayout } from '../../components/layout/AppLayout';
 import { Field } from '../../components/forms/Field';
 import { FoodSearchSelect } from '../../components/forms/FoodSearchSelect';
@@ -156,7 +157,7 @@ export function AddFoodScreen() {
         </div>
 
         {preview && (
-          <p className="mb-4 text-sm text-slate-600">
+          <p className="mb-4 text-sm text-ink-secondary">
             {preview.totalCalories} kcal · P {preview.totalProteinG}g · C {preview.totalCarbsG}g · F{' '}
             {preview.totalFatG}g · Fiber {preview.totalFiberG}g
           </p>
@@ -188,7 +189,7 @@ export function AddFoodScreen() {
         </Field>
 
         {error && (
-          <p role="alert" className="mb-4 text-sm text-red-600">
+          <p role="alert" className="mb-4 text-sm text-red-600 dark:text-red-400">
             {error}
           </p>
         )}
@@ -206,25 +207,35 @@ export function AddFoodScreen() {
       </form>
 
       <section>
-        <h2 className="mb-2 text-sm font-semibold text-slate-500">Logged on {logDate}</h2>
+        <h2 className="mb-2 text-sm font-semibold text-muted">Logged on {logDate}</h2>
         {!todayLogs || todayLogs.length === 0 ? (
-          <p className="text-sm text-slate-400">No food logged yet for this date.</p>
+          <p className="text-sm text-subtle">No food logged yet for this date.</p>
         ) : (
           <ul className="space-y-2">
             {todayLogs.map((log) => (
               <li key={log.id} className={`${cardClass} flex items-center justify-between`}>
                 <div>
-                  <p className="font-medium text-slate-900">{log.foodNameSnapshot}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="font-medium text-ink">{log.foodNameSnapshot}</p>
+                  <p className="text-xs text-subtle">
                     {log.mealCategory} · {log.quantity} {log.unitType} · {log.totalCalories} kcal
                   </p>
                 </div>
-                <div className="flex gap-2 text-sm">
-                  <button type="button" className="text-brand-700 underline" onClick={() => handleEdit(log)}>
-                    Edit
+                <div className="flex gap-1">
+                  <button
+                    type="button"
+                    aria-label="Edit entry"
+                    className="rounded-lg p-2 text-subtle hover:bg-surface-hover hover:text-ink-secondary"
+                    onClick={() => handleEdit(log)}
+                  >
+                    <Pencil size={16} strokeWidth={1.75} />
                   </button>
-                  <button type="button" className="text-red-600 underline" onClick={() => handleDelete(log.id)}>
-                    Delete
+                  <button
+                    type="button"
+                    aria-label="Delete entry"
+                    className="rounded-lg p-2 text-subtle hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400"
+                    onClick={() => handleDelete(log.id)}
+                  >
+                    <Trash2 size={16} strokeWidth={1.75} />
                   </button>
                 </div>
               </li>
@@ -238,7 +249,8 @@ export function AddFoodScreen() {
         className={`${buttonSecondaryClass} mt-6`}
         onClick={() => navigate('/food/custom')}
       >
-        + Add Custom Food
+        <Plus size={16} strokeWidth={2} />
+        Add Custom Food
       </button>
     </AppLayout>
   );

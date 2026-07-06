@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingLayout } from '../../components/layout/OnboardingLayout';
 import { Disclaimer } from '../../components/layout/Disclaimer';
+import { StatList } from '../../components/cards/StatList';
 import { buttonPrimaryClass, buttonSecondaryClass, cardClass } from '../../components/forms/inputStyles';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { computeHealthGoals } from '../../lib/healthGoals';
@@ -44,7 +45,7 @@ export function HealthReportScreen() {
   }, [profile]);
 
   if (isLoading || status === 'loading') {
-    return <div className="flex min-h-screen items-center justify-center text-slate-500">Generating report…</div>;
+    return <div className="flex min-h-screen items-center justify-center text-muted">Generating report…</div>;
   }
 
   if (!profile || status === 'missing') {
@@ -60,72 +61,51 @@ export function HealthReportScreen() {
     <OnboardingLayout title="Your Health Report" step={3} totalSteps={3}>
       <div className="space-y-4">
         <section className={cardClass}>
-          <h2 className="mb-2 text-sm font-semibold text-slate-500">Profile</h2>
-          <dl className="grid grid-cols-2 gap-y-1 text-sm">
-            <dt className="text-slate-500">Name</dt>
-            <dd className="text-right font-medium">{profile.name}</dd>
-            <dt className="text-slate-500">Age</dt>
-            <dd className="text-right font-medium">{age}</dd>
-            <dt className="text-slate-500">Gender</dt>
-            <dd className="text-right font-medium capitalize">{profile.gender.replace(/_/g, ' ')}</dd>
-            <dt className="text-slate-500">Height</dt>
-            <dd className="text-right font-medium">
-              {profile.heightValue} {profile.heightUnit === 'cm' ? 'cm' : 'in'}
-            </dd>
-            <dt className="text-slate-500">Weight</dt>
-            <dd className="text-right font-medium">
-              {profile.weightValue} {profile.weightUnit}
-            </dd>
-          </dl>
+          <h2 className="mb-1 text-sm font-semibold text-muted">Profile</h2>
+          <StatList
+            items={[
+              { label: 'Name', value: profile.name },
+              { label: 'Age', value: age },
+              { label: 'Gender', value: <span className="capitalize">{profile.gender.replace(/_/g, ' ')}</span> },
+              { label: 'Height', value: `${profile.heightValue} ${profile.heightUnit === 'cm' ? 'cm' : 'in'}` },
+              { label: 'Weight', value: `${profile.weightValue} ${profile.weightUnit}` },
+            ]}
+          />
         </section>
 
         <section className={cardClass}>
-          <h2 className="mb-2 text-sm font-semibold text-slate-500">Body Metrics</h2>
-          <dl className="grid grid-cols-2 gap-y-1 text-sm">
-            <dt className="text-slate-500">BMI</dt>
-            <dd className="text-right font-medium">{goals.bmi.toFixed(1)}</dd>
-            <dt className="text-slate-500">BMI category</dt>
-            <dd className="text-right font-medium">{goals.bmiCategory}</dd>
-            {goals.estimatedBodyFatPercentage !== undefined && (
-              <>
-                <dt className="text-slate-500">Estimated body fat %</dt>
-                <dd className="text-right font-medium">{goals.estimatedBodyFatPercentage.toFixed(1)}%</dd>
-              </>
-            )}
-            <dt className="text-slate-500">Recommendation</dt>
-            <dd className="text-right font-medium">{goals.recommendation}</dd>
-            {goals.weightToLoseKg !== undefined && (
-              <>
-                <dt className="text-slate-500">Weight to lose</dt>
-                <dd className="text-right font-medium">{goals.weightToLoseKg.toFixed(1)} kg</dd>
-              </>
-            )}
-            {goals.weightToGainKg !== undefined && (
-              <>
-                <dt className="text-slate-500">Weight to gain</dt>
-                <dd className="text-right font-medium">{goals.weightToGainKg.toFixed(1)} kg</dd>
-              </>
-            )}
-          </dl>
+          <h2 className="mb-1 text-sm font-semibold text-muted">Body Metrics</h2>
+          <StatList
+            items={[
+              { label: 'BMI', value: goals.bmi.toFixed(1) },
+              { label: 'BMI category', value: goals.bmiCategory },
+              ...(goals.estimatedBodyFatPercentage !== undefined
+                ? [{ label: 'Estimated body fat %', value: `${goals.estimatedBodyFatPercentage.toFixed(1)}%` }]
+                : []),
+              { label: 'Recommendation', value: goals.recommendation },
+              ...(goals.weightToLoseKg !== undefined
+                ? [{ label: 'Weight to lose', value: `${goals.weightToLoseKg.toFixed(1)} kg` }]
+                : []),
+              ...(goals.weightToGainKg !== undefined
+                ? [{ label: 'Weight to gain', value: `${goals.weightToGainKg.toFixed(1)} kg` }]
+                : []),
+            ]}
+          />
         </section>
 
         <section className={cardClass}>
-          <h2 className="mb-2 text-sm font-semibold text-slate-500">Daily Targets</h2>
-          <dl className="grid grid-cols-2 gap-y-1 text-sm">
-            <dt className="text-slate-500">Calories</dt>
-            <dd className="text-right font-medium">{goals.dailyCalorieTarget} kcal</dd>
-            <dt className="text-slate-500">Protein</dt>
-            <dd className="text-right font-medium">{goals.proteinTargetG} g</dd>
-            <dt className="text-slate-500">Carbohydrates</dt>
-            <dd className="text-right font-medium">{goals.carbsTargetG} g</dd>
-            <dt className="text-slate-500">Fat</dt>
-            <dd className="text-right font-medium">{goals.fatTargetG} g</dd>
-            <dt className="text-slate-500">Fiber</dt>
-            <dd className="text-right font-medium">{goals.fiberTargetG} g</dd>
-            <dt className="text-slate-500">Water</dt>
-            <dd className="text-right font-medium">{goals.waterTargetMl} ml</dd>
-          </dl>
-          <p className="mt-3 text-xs text-slate-400">
+          <h2 className="mb-1 text-sm font-semibold text-muted">Daily Targets</h2>
+          <StatList
+            items={[
+              { label: 'Calories', value: `${goals.dailyCalorieTarget} kcal` },
+              { label: 'Protein', value: `${goals.proteinTargetG} g` },
+              { label: 'Carbohydrates', value: `${goals.carbsTargetG} g` },
+              { label: 'Fat', value: `${goals.fatTargetG} g` },
+              { label: 'Fiber', value: `${goals.fiberTargetG} g` },
+              { label: 'Water', value: `${goals.waterTargetMl} ml` },
+            ]}
+          />
+          <p className="mt-3 text-xs text-subtle">
             Calorie target is calculated for your goal weight, not your current weight, so it stays
             steady as you progress.
           </p>

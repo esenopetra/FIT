@@ -1,24 +1,27 @@
 import { useNavigate } from 'react-router-dom';
+import { Utensils, Droplets, Activity, BarChart3, ClipboardList, Dumbbell } from 'lucide-react';
 import { AppLayout } from '../../components/layout/AppLayout';
 import { StatCard } from '../../components/cards/StatCard';
 import { ProgressBar } from '../../components/cards/ProgressBar';
 import { RadialProgress } from '../../components/charts/RadialProgress';
 import { MacroProgressChart } from '../../components/charts/MacroProgressChart';
 import { TrendBarChart } from '../../components/charts/TrendBarChart';
-import { cardClass, buttonSecondaryClass } from '../../components/forms/inputStyles';
+import { cardClass } from '../../components/forms/inputStyles';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { useDailyTotals } from '../../hooks/useDailyTotals';
 import { useWeeklyTrend } from '../../hooks/useWeeklyTrend';
 import { useStreak } from '../../hooks/useStreak';
 import { todayStr } from '../../lib/dateUtils';
+import { getChartColors } from '../../components/charts/chartColors';
+import { useIsDarkMode } from '../../hooks/useIsDarkMode';
 
 const QUICK_ACTIONS = [
-  { to: '/food/add', label: 'Add Food', icon: '🍽️' },
-  { to: '/water', label: 'Add Water', icon: '💧' },
-  { to: '/exercise/add', label: 'Add Exercise', icon: '🏃' },
-  { to: '/reports', label: 'View Reports', icon: '📊' },
-  { to: '/food/manage', label: 'Manage Foods', icon: '📋' },
-  { to: '/exercise/manage', label: 'Manage Exercises', icon: '🗂️' },
+  { to: '/food/add', label: 'Add Food', Icon: Utensils },
+  { to: '/water', label: 'Add Water', Icon: Droplets },
+  { to: '/exercise/add', label: 'Add Exercise', Icon: Activity },
+  { to: '/reports', label: 'View Reports', Icon: BarChart3 },
+  { to: '/food/manage', label: 'Manage Foods', Icon: ClipboardList },
+  { to: '/exercise/manage', label: 'Manage Exercises', Icon: Dumbbell },
 ];
 
 export function DashboardScreen() {
@@ -28,11 +31,12 @@ export function DashboardScreen() {
   const totals = useDailyTotals(profile?.id, today);
   const trend = useWeeklyTrend(profile?.id);
   const streak = useStreak(profile?.id);
+  const chartColors = getChartColors(useIsDarkMode());
 
   if (!profile || !healthGoals || !totals) {
     return (
       <AppLayout title="Dashboard">
-        <p className="text-slate-500">Loading your dashboard…</p>
+        <p className="text-muted">Loading your dashboard…</p>
       </AppLayout>
     );
   }
@@ -56,7 +60,7 @@ export function DashboardScreen() {
       </div>
 
       <section className={`${cardClass} mb-4`}>
-        <h2 className="mb-3 text-sm font-semibold text-slate-500">Today's Progress</h2>
+        <h2 className="mb-3 text-sm font-semibold text-muted">Today's Progress</h2>
         <ProgressBar label="Protein" current={totals.totalProteinG} target={healthGoals.proteinTargetG} unit="g" />
         <ProgressBar label="Carbs" current={totals.totalCarbsG} target={healthGoals.carbsTargetG} unit="g" />
         <ProgressBar label="Fat" current={totals.totalFatG} target={healthGoals.fatTargetG} unit="g" />
@@ -66,22 +70,27 @@ export function DashboardScreen() {
 
       <div className="mb-4 grid grid-cols-2 gap-3">
         <section className={cardClass}>
-          <h2 className="mb-2 text-center text-sm font-semibold text-slate-500">Calories</h2>
+          <h2 className="mb-2 text-center text-sm font-semibold text-muted">Calories</h2>
           <RadialProgress
             current={totals.totalCalories}
             target={healthGoals.dailyCalorieTarget}
             unit="kcal"
-            color="#16a34a"
+            color={chartColors.calories}
           />
         </section>
         <section className={cardClass}>
-          <h2 className="mb-2 text-center text-sm font-semibold text-slate-500">Water</h2>
-          <RadialProgress current={totals.totalWaterMl} target={healthGoals.waterTargetMl} unit="ml" color="#0ea5e9" />
+          <h2 className="mb-2 text-center text-sm font-semibold text-muted">Water</h2>
+          <RadialProgress
+            current={totals.totalWaterMl}
+            target={healthGoals.waterTargetMl}
+            unit="ml"
+            color={chartColors.water}
+          />
         </section>
       </div>
 
       <section className={`${cardClass} mb-4`}>
-        <h2 className="mb-2 text-sm font-semibold text-slate-500">Macro Progress</h2>
+        <h2 className="mb-2 text-sm font-semibold text-muted">Macro Progress</h2>
         <MacroProgressChart
           protein={{ current: totals.totalProteinG, target: healthGoals.proteinTargetG }}
           carbs={{ current: totals.totalCarbsG, target: healthGoals.carbsTargetG }}
@@ -91,30 +100,24 @@ export function DashboardScreen() {
 
       {trend && (
         <section className={`${cardClass} mb-4`}>
-          <h2 className="mb-2 text-sm font-semibold text-slate-500">Exercise burn (7 days)</h2>
-          <TrendBarChart data={trend} dataKey="exerciseBurn" unit="kcal" color="#f97316" />
+          <h2 className="mb-2 text-sm font-semibold text-muted">Exercise burn (7 days)</h2>
+          <TrendBarChart data={trend} dataKey="exerciseBurn" unit="kcal" color={chartColors.exercise} />
         </section>
       )}
 
-      <section className="mb-4 grid grid-cols-3 gap-3">
+      <section className="mb-2 grid grid-cols-3 gap-3">
         {QUICK_ACTIONS.map((action) => (
           <button
             key={action.to}
             type="button"
             onClick={() => navigate(action.to)}
-            className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-white p-3 text-xs font-medium text-slate-700 shadow-sm active:bg-slate-50"
+            className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface p-3.5 text-xs font-medium text-ink-secondary hover:border-line hover:bg-surface-hover active:bg-track"
           >
-            <span className="text-xl" aria-hidden="true">
-              {action.icon}
-            </span>
+            <action.Icon size={20} strokeWidth={1.75} className="text-brand-600 dark:text-brand-400" aria-hidden="true" />
             {action.label}
           </button>
         ))}
       </section>
-
-      <button type="button" className={buttonSecondaryClass} onClick={() => navigate('/settings')}>
-        Settings
-      </button>
     </AppLayout>
   );
 }

@@ -15,13 +15,13 @@ export function Field({
 }) {
   return (
     <div className="mb-4">
-      <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium text-slate-700">
+      <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium text-ink-secondary">
         {label}
-        {optional && <span className="ml-1 text-slate-400">(optional)</span>}
+        {optional && <span className="ml-1 text-subtle">(optional)</span>}
       </label>
       {children}
       {error && (
-        <p role="alert" className="mt-1 text-sm text-red-600">
+        <p role="alert" className="mt-1 text-sm text-red-600 dark:text-red-400">
           {error}
         </p>
       )}

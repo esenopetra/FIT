@@ -76,7 +76,7 @@ export function CustomFoodScreen() {
   if (!loaded) {
     return (
       <AppLayout title="Custom Food">
-        <p className="text-slate-500">Loading…</p>
+        <p className="text-muted">Loading…</p>
       </AppLayout>
     );
   }

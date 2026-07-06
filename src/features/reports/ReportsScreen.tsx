@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { AppLayout } from '../../components/layout/AppLayout';
 import { Field } from '../../components/forms/Field';
 import { Disclaimer } from '../../components/layout/Disclaimer';
+import { StatList } from '../../components/cards/StatList';
 import { inputClass, buttonPrimaryClass, cardClass } from '../../components/forms/inputStyles';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { db } from '../../db/dexie';
@@ -11,6 +12,8 @@ import { getReportRange, type ReportRangeType, todayStr } from '../../lib/dateUt
 import { computeReportStats, computeMonthlyTrend } from './reportCalculations';
 import { exportPeriodReportPdf } from '../../lib/pdfExport';
 import { TrendBarChart } from '../../components/charts/TrendBarChart';
+import { getChartColors } from '../../components/charts/chartColors';
+import { useIsDarkMode } from '../../hooks/useIsDarkMode';
 import type { FoodLog, WaterLog, ExerciseLog, WeightLog } from '../../types';
 
 const RANGE_LABELS: Record<ReportRangeType, string> = {
@@ -27,6 +30,7 @@ export function ReportsScreen() {
   const [customStart, setCustomStart] = useState(todayStr());
   const [customEnd, setCustomEnd] = useState(todayStr());
   const chartRef = useRef<HTMLDivElement>(null);
+  const chartColors = getChartColors(useIsDarkMode());
 
   const range = useMemo(() => {
     if (rangeType === 'custom') {
@@ -138,66 +142,51 @@ export function ReportsScreen() {
       )}
 
       {isLoading || !stats ? (
-        <p className="text-slate-500">Loading report…</p>
+        <p className="text-muted">Loading report…</p>
       ) : (
         <div className="space-y-4">
           <section className={cardClass}>
-            <h2 className="mb-2 text-sm font-semibold text-slate-500">Summary</h2>
-            <dl className="grid grid-cols-2 gap-y-1 text-sm">
-              <dt className="text-slate-500">Total calories</dt>
-              <dd className="text-right font-medium">{stats.totalCalories} kcal</dd>
-              <dt className="text-slate-500">Avg calories / day</dt>
-              <dd className="text-right font-medium">{stats.avgCalories} kcal</dd>
-              <dt className="text-slate-500">Avg protein / day</dt>
-              <dd className="text-right font-medium">{stats.avgProteinG} g</dd>
-              <dt className="text-slate-500">Avg carbs / day</dt>
-              <dd className="text-right font-medium">{stats.avgCarbsG} g</dd>
-              <dt className="text-slate-500">Avg fat / day</dt>
-              <dd className="text-right font-medium">{stats.avgFatG} g</dd>
-              <dt className="text-slate-500">Avg fiber / day</dt>
-              <dd className="text-right font-medium">{stats.avgFiberG} g</dd>
-              <dt className="text-slate-500">Total water</dt>
-              <dd className="text-right font-medium">{stats.totalWaterMl} ml</dd>
-              <dt className="text-slate-500">Avg water / day</dt>
-              <dd className="text-right font-medium">{stats.avgWaterMl} ml</dd>
-              <dt className="text-slate-500">Exercise burn total</dt>
-              <dd className="text-right font-medium">{stats.totalExerciseBurn} kcal</dd>
-              <dt className="text-slate-500">Best tracking days</dt>
-              <dd className="text-right font-medium">
-                {stats.daysTracked} / {stats.totalDays}
-              </dd>
-              <dt className="text-slate-500">Missed tracking days</dt>
-              <dd className="text-right font-medium">
-                {stats.daysMissed} / {stats.totalDays}
-              </dd>
-              <dt className="text-slate-500">Goal completion</dt>
-              <dd className="text-right font-medium">{stats.goalCompletionPercent}%</dd>
-              {stats.weightChangeKg !== undefined && (
-                <>
-                  <dt className="text-slate-500">Weight change</dt>
-                  <dd className="text-right font-medium">
-                    {stats.weightChangeKg > 0 ? '+' : ''}
-                    {stats.weightChangeKg} kg
-                  </dd>
-                </>
-              )}
-            </dl>
+            <h2 className="mb-1 text-sm font-semibold text-muted">Summary</h2>
+            <StatList
+              items={[
+                { label: 'Total calories', value: `${stats.totalCalories} kcal` },
+                { label: 'Avg calories / day', value: `${stats.avgCalories} kcal` },
+                { label: 'Avg protein / day', value: `${stats.avgProteinG} g` },
+                { label: 'Avg carbs / day', value: `${stats.avgCarbsG} g` },
+                { label: 'Avg fat / day', value: `${stats.avgFatG} g` },
+                { label: 'Avg fiber / day', value: `${stats.avgFiberG} g` },
+                { label: 'Total water', value: `${stats.totalWaterMl} ml` },
+                { label: 'Avg water / day', value: `${stats.avgWaterMl} ml` },
+                { label: 'Exercise burn total', value: `${stats.totalExerciseBurn} kcal` },
+                { label: 'Best tracking days', value: `${stats.daysTracked} / ${stats.totalDays}` },
+                { label: 'Missed tracking days', value: `${stats.daysMissed} / ${stats.totalDays}` },
+                { label: 'Goal completion', value: `${stats.goalCompletionPercent}%` },
+                ...(stats.weightChangeKg !== undefined
+                  ? [
+                      {
+                        label: 'Weight change',
+                        value: `${stats.weightChangeKg > 0 ? '+' : ''}${stats.weightChangeKg} kg`,
+                      },
+                    ]
+                  : []),
+              ]}
+            />
           </section>
 
           <div ref={chartRef} className="space-y-4">
             {rangeType !== 'year' && (
               <>
                 <section className={cardClass}>
-                  <h2 className="mb-2 text-sm font-semibold text-slate-500">Daily Calories</h2>
-                  <TrendBarChart data={dailyChartData} dataKey="calories" unit="kcal" color="#16a34a" />
+                  <h2 className="mb-2 text-sm font-semibold text-muted">Daily Calories</h2>
+                  <TrendBarChart data={dailyChartData} dataKey="calories" unit="kcal" color={chartColors.calories} />
                 </section>
                 <section className={cardClass}>
-                  <h2 className="mb-2 text-sm font-semibold text-slate-500">Daily Water</h2>
-                  <TrendBarChart data={dailyChartData} dataKey="waterMl" unit="ml" color="#0ea5e9" />
+                  <h2 className="mb-2 text-sm font-semibold text-muted">Daily Water</h2>
+                  <TrendBarChart data={dailyChartData} dataKey="waterMl" unit="ml" color={chartColors.water} />
                 </section>
                 <section className={cardClass}>
-                  <h2 className="mb-2 text-sm font-semibold text-slate-500">Daily Exercise Burn</h2>
-                  <TrendBarChart data={dailyChartData} dataKey="exerciseBurn" unit="kcal" color="#f97316" />
+                  <h2 className="mb-2 text-sm font-semibold text-muted">Daily Exercise Burn</h2>
+                  <TrendBarChart data={dailyChartData} dataKey="exerciseBurn" unit="kcal" color={chartColors.exercise} />
                 </section>
               </>
             )}
@@ -205,25 +194,25 @@ export function ReportsScreen() {
             {rangeType === 'year' && monthlyChartData.length > 0 && (
               <>
                 <section className={cardClass}>
-                  <h2 className="mb-2 text-sm font-semibold text-slate-500">Month-wise Calories</h2>
-                  <TrendBarChart data={monthlyChartData} dataKey="calories" unit="kcal" color="#16a34a" />
+                  <h2 className="mb-2 text-sm font-semibold text-muted">Month-wise Calories</h2>
+                  <TrendBarChart data={monthlyChartData} dataKey="calories" unit="kcal" color={chartColors.calories} />
                 </section>
                 <section className={cardClass}>
-                  <h2 className="mb-2 text-sm font-semibold text-slate-500">Month-wise Water</h2>
-                  <TrendBarChart data={monthlyChartData} dataKey="waterMl" unit="ml" color="#0ea5e9" />
+                  <h2 className="mb-2 text-sm font-semibold text-muted">Month-wise Water</h2>
+                  <TrendBarChart data={monthlyChartData} dataKey="waterMl" unit="ml" color={chartColors.water} />
                 </section>
                 <section className={cardClass}>
-                  <h2 className="mb-2 text-sm font-semibold text-slate-500">Month-wise Exercise</h2>
-                  <TrendBarChart data={monthlyChartData} dataKey="exerciseBurn" unit="kcal" color="#f97316" />
+                  <h2 className="mb-2 text-sm font-semibold text-muted">Month-wise Exercise</h2>
+                  <TrendBarChart data={monthlyChartData} dataKey="exerciseBurn" unit="kcal" color={chartColors.exercise} />
                 </section>
                 {bestMonth && lowestMonth && (
                   <section className={cardClass}>
-                    <h2 className="mb-2 text-sm font-semibold text-slate-500">Tracking Consistency</h2>
-                    <p className="text-sm text-slate-700">
+                    <h2 className="mb-2 text-sm font-semibold text-muted">Tracking Consistency</h2>
+                    <p className="text-sm text-ink-secondary">
                       Best tracked month: <span className="font-medium">{bestMonth.label}</span> (
                       {bestMonth.daysTracked} days logged)
                     </p>
-                    <p className="text-sm text-slate-700">
+                    <p className="text-sm text-ink-secondary">
                       Lowest tracked month: <span className="font-medium">{lowestMonth.label}</span> (
                       {lowestMonth.daysTracked} days logged)
                     </p>
@@ -234,12 +223,12 @@ export function ReportsScreen() {
 
             {stats.weightSeries.length > 0 && (
               <section className={cardClass}>
-                <h2 className="mb-2 text-sm font-semibold text-slate-500">Weight Progress</h2>
+                <h2 className="mb-2 text-sm font-semibold text-muted">Weight Progress</h2>
                 <TrendBarChart
                   data={stats.weightSeries.map((w) => ({ label: w.date.slice(5), weightKg: w.weightKg }))}
                   dataKey="weightKg"
                   unit="kg"
-                  color="#8b5cf6"
+                  color={chartColors.weight}
                 />
               </section>
             )}
@@ -247,47 +236,26 @@ export function ReportsScreen() {
 
           {stats.categoryBreakdown.length > 0 && (
             <section className={cardClass}>
-              <h2 className="mb-2 text-sm font-semibold text-slate-500">Food Category Breakdown</h2>
-              <ul className="space-y-1 text-sm">
-                {stats.categoryBreakdown.map((c) => (
-                  <li key={c.category} className="flex justify-between">
-                    <span className="text-slate-700">{c.category}</span>
-                    <span className="font-medium">{c.calories} kcal</span>
-                  </li>
-                ))}
-              </ul>
+              <h2 className="mb-1 text-sm font-semibold text-muted">Food Category Breakdown</h2>
+              <StatList items={stats.categoryBreakdown.map((c) => ({ label: c.category, value: `${c.calories} kcal` }))} />
             </section>
           )}
 
           <section className={cardClass}>
-            <h2 className="mb-2 text-sm font-semibold text-slate-500">Most Frequently Eaten Foods</h2>
+            <h2 className="mb-1 text-sm font-semibold text-muted">Most Frequently Eaten Foods</h2>
             {stats.topFoods.length === 0 ? (
-              <p className="text-sm text-slate-400">No food logged in this range.</p>
+              <p className="text-sm text-subtle">No food logged in this range.</p>
             ) : (
-              <ul className="space-y-1 text-sm">
-                {stats.topFoods.map((f) => (
-                  <li key={f.name} className="flex justify-between">
-                    <span className="text-slate-700">{f.name}</span>
-                    <span className="font-medium">{f.count}x</span>
-                  </li>
-                ))}
-              </ul>
+              <StatList items={stats.topFoods.map((f) => ({ label: f.name, value: `${f.count}×` }))} />
             )}
           </section>
 
           <section className={cardClass}>
-            <h2 className="mb-2 text-sm font-semibold text-slate-500">Most Frequent Exercises</h2>
+            <h2 className="mb-1 text-sm font-semibold text-muted">Most Frequent Exercises</h2>
             {stats.topExercises.length === 0 ? (
-              <p className="text-sm text-slate-400">No exercise logged in this range.</p>
+              <p className="text-sm text-subtle">No exercise logged in this range.</p>
             ) : (
-              <ul className="space-y-1 text-sm">
-                {stats.topExercises.map((e) => (
-                  <li key={e.name} className="flex justify-between">
-                    <span className="text-slate-700">{e.name}</span>
-                    <span className="font-medium">{e.count}x</span>
-                  </li>
-                ))}
-              </ul>
+              <StatList items={stats.topExercises.map((e) => ({ label: e.name, value: `${e.count}×` }))} />
             )}
           </section>
 

@@ -1,5 +1,9 @@
 import { useRef, useState } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { User, Cloud, Scale, Ruler, ListChecks, ArrowDownUp, TriangleAlert, Info, Palette, Sun, Moon, Monitor } from 'lucide-react';
+import { useTheme } from '../../hooks/useTheme';
+import type { ThemePreference } from '../../lib/theme';
 import { AppLayout } from '../../components/layout/AppLayout';
 import { Field } from '../../components/forms/Field';
 import { Disclaimer } from '../../components/layout/Disclaimer';
@@ -22,10 +26,32 @@ import { pushBackupToCloud, restoreFromCloud, getCloudBackupMeta } from '../../l
 import { ensureSeeded } from '../../db/seed';
 import type { AppSettings, UserProfile, HealthGoals } from '../../types';
 
+const THEME_OPTIONS: { value: ThemePreference; label: string; Icon: typeof Sun }[] = [
+  { value: 'light', label: 'Light', Icon: Sun },
+  { value: 'dark', label: 'Dark', Icon: Moon },
+  { value: 'system', label: 'System', Icon: Monitor },
+];
+
+function SectionHeading({
+  icon: Icon,
+  children,
+}: {
+  icon: ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
+  children: ReactNode;
+}) {
+  return (
+    <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted">
+      <Icon size={16} strokeWidth={1.75} className="text-subtle" />
+      {children}
+    </h2>
+  );
+}
+
 export function SettingsScreen() {
   const navigate = useNavigate();
   const { profile, healthGoals } = useCurrentUser();
   const { user, isConfigured, signOut } = useAuth();
+  const { preference: themePreference, setPreference: setThemePreference } = useTheme();
   const importInputRef = useRef<HTMLInputElement>(null);
 
   const [weightInput, setWeightInput] = useState('');
@@ -185,18 +211,42 @@ export function SettingsScreen() {
     <AppLayout title="Settings">
       <div className="space-y-4 pb-6">
         <section className={cardClass}>
-          <h2 className="mb-3 text-sm font-semibold text-slate-500">Profile</h2>
+          <SectionHeading icon={User}>Profile</SectionHeading>
           <button type="button" className={buttonSecondaryClass} onClick={() => navigate('/settings/profile')}>
             Edit Profile
           </button>
         </section>
 
+        <section className={cardClass}>
+          <SectionHeading icon={Palette}>Appearance</SectionHeading>
+          <div className="grid grid-cols-3 gap-2">
+            {THEME_OPTIONS.map((option) => {
+              const isActive = themePreference === option.value;
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setThemePreference(option.value)}
+                  className={`flex flex-col items-center gap-1.5 rounded-xl border px-2 py-2.5 text-xs font-medium transition-colors ${
+                    isActive
+                      ? 'border-brand-tint-border bg-brand-tint text-brand-700 dark:text-brand-400'
+                      : 'border-line text-ink-secondary hover:bg-surface-hover'
+                  }`}
+                >
+                  <option.Icon size={18} strokeWidth={1.75} />
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
         {isConfigured && (
           <section className={cardClass}>
-            <h2 className="mb-3 text-sm font-semibold text-slate-500">Account & Cloud Backup</h2>
+            <SectionHeading icon={Cloud}>Account & Cloud Backup</SectionHeading>
             {user ? (
               <>
-                <p className="mb-3 text-sm text-slate-600">Signed in as {user.email}</p>
+                <p className="mb-3 text-sm text-ink-secondary">Signed in as {user.email}</p>
                 <div className="space-y-2">
                   <button
                     type="button"
@@ -221,7 +271,7 @@ export function SettingsScreen() {
               </>
             ) : (
               <>
-                <p className="mb-3 text-sm text-slate-600">
+                <p className="mb-3 text-sm text-ink-secondary">
                   Sign in to back up your data and restore it if you switch devices or clear your
                   browser.
                 </p>
@@ -230,12 +280,12 @@ export function SettingsScreen() {
                 </button>
               </>
             )}
-            {cloudMessage && <p className="mt-2 text-sm text-slate-500">{cloudMessage}</p>}
+            {cloudMessage && <p className="mt-2 text-sm text-muted">{cloudMessage}</p>}
           </section>
         )}
 
         <section className={cardClass}>
-          <h2 className="mb-3 text-sm font-semibold text-slate-500">Update Current Weight</h2>
+          <SectionHeading icon={Scale}>Update Current Weight</SectionHeading>
           <form onSubmit={handleUpdateWeight} className="flex gap-2">
             <input
               type="number"
@@ -249,14 +299,14 @@ export function SettingsScreen() {
               Update
             </button>
           </form>
-          {weightMessage && <p className="mt-2 text-sm text-slate-500">{weightMessage}</p>}
-          <p className="mt-2 text-xs text-slate-400">
+          {weightMessage && <p className="mt-2 text-sm text-muted">{weightMessage}</p>}
+          <p className="mt-2 text-xs text-subtle">
             To change your target weight, use Edit Profile above.
           </p>
         </section>
 
         <section className={cardClass}>
-          <h2 className="mb-3 text-sm font-semibold text-slate-500">Measurement Units</h2>
+          <SectionHeading icon={Ruler}>Measurement Units</SectionHeading>
           <div className="grid grid-cols-2 gap-2">
             <Field label="Height unit" htmlFor="heightUnitSetting">
               <select
@@ -281,11 +331,11 @@ export function SettingsScreen() {
               </select>
             </Field>
           </div>
-          {unitMessage && <p className="text-sm text-slate-500">{unitMessage}</p>}
+          {unitMessage && <p className="text-sm text-muted">{unitMessage}</p>}
         </section>
 
         <section className={cardClass}>
-          <h2 className="mb-3 text-sm font-semibold text-slate-500">Manage Lists</h2>
+          <SectionHeading icon={ListChecks}>Manage Lists</SectionHeading>
           <div className="space-y-2">
             <button type="button" className={buttonSecondaryClass} onClick={() => navigate('/food/manage')}>
               Manage Food List
@@ -297,7 +347,7 @@ export function SettingsScreen() {
         </section>
 
         <section className={cardClass}>
-          <h2 className="mb-3 text-sm font-semibold text-slate-500">Backup & Restore</h2>
+          <SectionHeading icon={ArrowDownUp}>Backup & Restore</SectionHeading>
           <div className="space-y-2">
             <button type="button" className={buttonSecondaryClass} onClick={handleExport}>
               Export All Data as JSON
@@ -317,18 +367,18 @@ export function SettingsScreen() {
               onChange={handleImportFile}
             />
           </div>
-          {importMessage && <p className="mt-2 text-sm text-slate-500">{importMessage}</p>}
+          {importMessage && <p className="mt-2 text-sm text-muted">{importMessage}</p>}
         </section>
 
         <section className={cardClass}>
-          <h2 className="mb-3 text-sm font-semibold text-slate-500">Danger Zone</h2>
+          <SectionHeading icon={TriangleAlert}>Danger Zone</SectionHeading>
           <button type="button" className={buttonDangerClass} onClick={handleClearData}>
             Clear All Data
           </button>
         </section>
 
         <section className={cardClass}>
-          <h2 className="mb-2 text-sm font-semibold text-slate-500">Health Disclaimer</h2>
+          <SectionHeading icon={Info}>Health Disclaimer</SectionHeading>
           <Disclaimer />
         </section>
       </div>

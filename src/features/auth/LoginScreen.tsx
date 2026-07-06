@@ -34,7 +34,7 @@ export function LoginScreen() {
     return (
       <AppLayout title="Account">
         <section className={cardClass}>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-ink-secondary">
             Cloud account isn't set up for this app yet. Your data still works fully offline on this
             device — ask whoever set up the app to configure cloud backup if you'd like to sign in
             and sync across devices.
@@ -86,7 +86,7 @@ export function LoginScreen() {
   return (
     <AppLayout title="Account">
       <section className={cardClass}>
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">
+        <h2 className="mb-4 text-lg font-semibold text-ink">
           {mode === 'signIn' ? 'Sign in' : 'Create account'}
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -97,9 +97,9 @@ export function LoginScreen() {
             <input id="password" type="password" className={inputClass} {...register('password')} />
           </Field>
 
-          {statusMessage && <p className="mb-4 text-sm text-brand-700">{statusMessage}</p>}
+          {statusMessage && <p className="mb-4 text-sm text-brand-700 dark:text-brand-400">{statusMessage}</p>}
           {errorMessage && (
-            <p role="alert" className="mb-4 text-sm text-red-600">
+            <p role="alert" className="mb-4 text-sm text-red-600 dark:text-red-400">
               {errorMessage}
             </p>
           )}
@@ -122,7 +122,7 @@ export function LoginScreen() {
           </div>
         </form>
       </section>
-      <p className="mt-4 text-xs text-slate-400">
+      <p className="mt-4 text-xs text-subtle">
         Signing in is optional. Your data is always available offline on this device — an account
         just lets you back it up and restore it on another device.
       </p>

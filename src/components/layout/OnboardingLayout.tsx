@@ -12,17 +12,24 @@ export function OnboardingLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="flex min-h-full flex-col bg-slate-50">
+    <div className="flex min-h-full flex-col bg-surface">
       {step !== undefined && totalSteps !== undefined && (
-        <div className="h-1.5 w-full bg-slate-200">
-          <div
-            className="h-full bg-brand-600 transition-all"
-            style={{ width: `${(step / totalSteps) * 100}%` }}
-          />
+        <div className="px-5 pt-5">
+          <div className="mb-1.5 flex justify-between text-xs font-medium text-subtle">
+            <span>
+              Step {step} of {totalSteps}
+            </span>
+          </div>
+          <div className="h-1 w-full overflow-hidden rounded-full bg-track">
+            <div
+              className="h-full rounded-full bg-brand-600 transition-all duration-300"
+              style={{ width: `${(step / totalSteps) * 100}%` }}
+            />
+          </div>
         </div>
       )}
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col px-5 py-8">
-        <h1 className="mb-6 text-xl font-semibold text-slate-900">{title}</h1>
+      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col px-5 py-7">
+        <h1 className="mb-6 text-xl font-semibold tracking-tight text-ink">{title}</h1>
         {children}
       </main>
     </div>

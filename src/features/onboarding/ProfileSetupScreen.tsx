@@ -83,7 +83,7 @@ export function ProfileSetupScreen() {
         <Field label="Date of birth" htmlFor="dob" error={errors.dob?.message}>
           <input id="dob" type="date" className={inputClass} {...register('dob')} />
           {age !== undefined && !errors.dob && (
-            <p className="mt-1 text-sm text-slate-500">Age: {age}</p>
+            <p className="mt-1 text-sm text-muted">Age: {age}</p>
           )}
         </Field>
 

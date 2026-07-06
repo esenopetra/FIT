@@ -70,7 +70,7 @@ export function CustomExerciseScreen() {
   if (!loaded) {
     return (
       <AppLayout title="Custom Exercise">
-        <p className="text-slate-500">Loading…</p>
+        <p className="text-muted">Loading…</p>
       </AppLayout>
     );
   }

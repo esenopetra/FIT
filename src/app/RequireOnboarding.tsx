@@ -5,7 +5,7 @@ export function RequireOnboarding() {
   const { isLoading, isOnboarded } = useCurrentUser();
 
   if (isLoading) {
-    return <div className="flex min-h-screen items-center justify-center text-slate-500">Loading…</div>;
+    return <div className="flex min-h-screen items-center justify-center text-muted">Loading…</div>;
   }
 
   if (!isOnboarded) {
